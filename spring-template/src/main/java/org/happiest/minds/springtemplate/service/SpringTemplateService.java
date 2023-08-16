@@ -116,7 +116,6 @@ public class SpringTemplateService {
         /* Zip name */
         String projectZipFolder = "download/" + springTemplateRequest.getArtifactId() + ".zip";
 
-
         /* Zip the project directory */
         zipFolder(Path.of(newFolderName), Path.of(projectZipFolder));
 
