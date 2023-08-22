@@ -2,6 +2,8 @@ package org.happiest.minds.springtemplate.request;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class SpringTemplateRequest {
 
@@ -10,5 +12,5 @@ public class SpringTemplateRequest {
     private String name;
     private String description;
     private String packagingType;
-    private String[] dependencies;
+    private List<String> dependencies;
 }

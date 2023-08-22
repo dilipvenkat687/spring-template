@@ -16,6 +16,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 @Component
@@ -66,7 +67,7 @@ public class XMLUtility {
 
             }
 
-            Set<String> dependencyInput = Set.of(springTemplateRequest.getDependencies());
+            Set<String> dependencyInput = new HashSet<>(springTemplateRequest.getDependencies());
             Element groupIdOfDependency;
             Element artifactIdOfDependency;
             Element dependency;
@@ -168,7 +169,7 @@ public class XMLUtility {
                         groupIdOfDependency.setTextContent(groupIdValue);
                         artifactIdOfDependency.setTextContent(artifactIdValue);
                         break;
-                    case "H2 Database":
+                    case "H2":
                         dependency = doc.createElement("dependency");
                         dependenciesElement = (Element) dependencies.item(0);
                         dependenciesElement.appendChild(dependency);

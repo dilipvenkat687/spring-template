@@ -1,0 +1,15 @@
+server.port: 8083
+logging.config: classpath:logback-spring-json.xml
+
+spring:
+  application.name: pipimprovement
+  profiles.active: dev
+    
+management:
+  endpoints.web.exposure.include: "*"
+  endpoint:
+    prometheus.enabled: true
+    metrics.enabled: true
+    health.show-details: ALWAYS
+  metrics.export.prometheus.enabled: true
+
