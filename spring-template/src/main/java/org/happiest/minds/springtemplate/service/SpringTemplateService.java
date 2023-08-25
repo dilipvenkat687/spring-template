@@ -1,6 +1,6 @@
 package org.happiest.minds.springtemplate.service;
 
-import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.happiest.minds.springtemplate.request.SpringTemplateRequest;
 import org.happiest.minds.springtemplate.utility.XMLUtility;
@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,8 +25,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Service
+@Slf4j
 public class SpringTemplateService {
 
+    public static final String DOWNLOAD_PIPIMPROVEMENT_SRC_MAIN_JAVA = "download/pipimprovement/src/main/java/";
+    public static final String SLASH = "/";
+    public static final String DOWNLOAD_PIPIMPROVEMENT_SRC_TEST_JAVA = "download/pipimprovement/src/test/java/";
     @Autowired
     XMLUtility xmlUtility;
 
@@ -37,7 +42,8 @@ public class SpringTemplateService {
 
 
             /* Delete folders in src/main. Deleting in order to make directories according to the group id and artifact id */
-            FileUtils.deleteDirectory(new File("download/spring-template/src/main"));
+            FileUtils.deleteDirectory(new File("download/pipimprovement/src/main"));
+            FileUtils.deleteDirectory(new File("download/pipimprovement/src/test"));
 
 
             /* Replace "." with "//" in group id to make directories */
@@ -49,55 +55,65 @@ public class SpringTemplateService {
 
 
             /* Path where Application Main class present */
-            String mainClassPath = "download/spring-template/src/main/java/" + groupIdPath + "/" + artifactId;
+            String mainClassPath = DOWNLOAD_PIPIMPROVEMENT_SRC_MAIN_JAVA + groupIdPath + SLASH + artifactId.toLowerCase();
+            String testClassPath = DOWNLOAD_PIPIMPROVEMENT_SRC_TEST_JAVA + groupIdPath + SLASH + artifactId.toLowerCase();
 
 
             /* Create subdirectories according to group id and artifact id */
             Files.createDirectories(Path.of(mainClassPath));
+            Files.createDirectories(Path.of(testClassPath));
+
 
 
             /* Application Main class path in reference folder */
-            String mainFileReference = "reference/spring-template/src/main/java/org/happiest/minds/springtemplate";
+            String mainFileReference = "reference/pipimprovement/src/main/java/com/hm";
+            String testFileReference = "reference/pipimprovement/src/test/java/com/hm";
 
 
             /* Copy Application Main class from reference folder to download folder */
             FileUtils.copyDirectory(new File(mainFileReference), new File(mainClassPath));
+            FileUtils.copyDirectory(new File(testFileReference), new File(testClassPath));
 
 
             /* Path of Application Main class */
-            String mainClassFileName = mainClassPath + "/SpringTemplateApplication.java";
+            String mainClassFileName = mainClassPath + "/PipImprovementApplication.java";
+            String testClassFileName = testClassPath + "/PipImprovementApplicationTests.java";
 
 
             /* Replace class Name in Main class */
-            replaceText(mainClassFileName, "SpringTemplateApplication", StringUtils.capitalize(artifactId));
+            replaceText(mainClassFileName, "PipImprovementApplication", StringUtils.capitalize(artifactId) + "Application");
+            replaceText(testClassFileName, "PipImprovementApplicationTests", StringUtils.capitalize(artifactId) + "ApplicationTests");
 
 
             /* Replace package name with new package name */
-            replaceText(mainClassFileName, "org.happiest.minds.springtemplate", springTemplateRequest.getGroupId() + "." + artifactId);
+            replaceText(mainClassFileName, "com.hm", springTemplateRequest.getGroupId() + "." + artifactId.toLowerCase());
+            replaceText(testClassFileName, "com.hm", springTemplateRequest.getGroupId() + "." + artifactId.toLowerCase());
 
 
             /* New Main class name */
-            String mainClassNewFileName = mainClassPath + "/" + StringUtils.capitalize(artifactId) + ".java";
+            String mainClassNewFileName = mainClassPath + SLASH + StringUtils.capitalize(artifactId) + "Application.java";
+            String testClassNewFileName = testClassPath + SLASH + StringUtils.capitalize(artifactId) + "ApplicationTests.java";
 
 
             /* Renaming the Main class name */
             FileUtils.moveFile(new File(mainClassFileName), new File(mainClassNewFileName));
+            FileUtils.moveFile(new File(testClassFileName), new File(testClassNewFileName));
 
 
             /* Updating the pom.xml file */
-            xmlUtility.updateXMLElementValue("download/spring-template/pom.xml", springTemplateRequest);
+            xmlUtility.updateXMLElementValue("download/pipimprovement/pom.xml", springTemplateRequest);
 
 
             /* Project directory name */
-            File file = new File("download/spring-template");
+            File file = new File("download/pipimprovement");
 
 
             /* Project directory new name */
             String newFolderName = "download/" + springTemplateRequest.getArtifactId();
 
             /* Renaming the project directory name */
-            file.renameTo(new File(newFolderName));
-
+            boolean b = file.renameTo(new File(newFolderName));
+            log.info(String.valueOf(b));
 
             /* Zip the project and let the user download the zip */
             zipAndDownloadTemplate(response, springTemplateRequest, newFolderName);
@@ -107,11 +123,12 @@ public class SpringTemplateService {
             FileUtils.cleanDirectory(new File("download"));
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("Exception: {}", e.getMessage());
+
         }
     }
 
-    private void zipAndDownloadTemplate(HttpServletResponse response, SpringTemplateRequest springTemplateRequest, String newFolderName) throws Exception {
+    public void zipAndDownloadTemplate(HttpServletResponse response, SpringTemplateRequest springTemplateRequest, String newFolderName) throws Exception {
 
         /* Zip name */
         String projectZipFolder = "download/" + springTemplateRequest.getArtifactId() + ".zip";
@@ -140,28 +157,50 @@ public class SpringTemplateService {
     }
 
 
-    private static void replaceText(String filePath, String text, String replacement) {
+    public static void replaceText(String filePath, String text, String replacement) {
 
         Path path = Paths.get(filePath);
         try (Stream<String> stream = Files.lines(path, StandardCharsets.UTF_8)) {
             List<String> list = stream.map(line -> line.replace(text, replacement)).collect(Collectors.toList());
             Files.write(path, list, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Exception occurred : " + e.getMessage());
         }
     }
 
-    private void zipFolder(Path sourceFolderPath, Path zipPath) throws Exception {
-        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()));
-        Files.walkFileTree(sourceFolderPath, new SimpleFileVisitor<Path>() {
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                zos.putNextEntry(new ZipEntry(sourceFolderPath.relativize(file).toString()));
-                Files.copy(file, zos);
-                zos.closeEntry();
-                return FileVisitResult.CONTINUE;
-            }
-        });
-        zos.close();
+
+    private void zipFolder(Path sourceFolderPath, Path zipPath) {
+
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()))) {
+
+            Files.walkFileTree(sourceFolderPath, new SimpleFileVisitor<Path>() {
+
+                @Override
+
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+
+                    zos.putNextEntry(new ZipEntry(sourceFolderPath.relativize(file).toString()));
+
+                    Files.copy(file, zos);
+
+                    zos.closeEntry();
+
+                    return FileVisitResult.CONTINUE;
+
+                }
+
+            });
+
+        } catch (IOException e) {
+
+            log.error("Exception occurred: " + e.getMessage());
+
+        }
+
     }
+    public List<String> getDependency() {
+        return List.of("Web", "GraphQL", "Thymeleaf", "Security", "Jpa", "JDBC", "MySQL", "H2", "Validation", "Lombok");
+    }
+
 
 }

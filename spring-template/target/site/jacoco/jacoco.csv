@@ -1,0 +1,8 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+spring-template,org.happiest.minds.springtemplate.utility,XMLUtility,568,4,23,0,163,1,18,1,2,1
+spring-template,org.happiest.minds.springtemplate.request,SpringTemplateRequest,232,43,54,0,0,7,34,10,7,10
+spring-template,org.happiest.minds.springtemplate.exception,GlobalExceptionHandler,28,0,0,0,8,0,3,0,3,0
+spring-template,org.happiest.minds.springtemplate.service,SpringTemplateService,278,39,2,0,57,8,5,4,4,4
+spring-template,org.happiest.minds.springtemplate.service,SpringTemplateService.new SimpleFileVisitor() {...},33,0,0,0,5,0,2,0,2,0
+spring-template,org.happiest.minds.springtemplate.controller,SpringTemplateController,0,45,0,4,0,9,0,5,0,3
+spring-template,org.happiest.minds.springtemplate,SpringTemplateApplication,8,0,0,0,3,0,2,0,2,0

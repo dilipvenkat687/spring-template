@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpringTemplateService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">spring-template</a> &gt; <a href="index.source.html" class="el_package">org.happiest.minds.springtemplate.service</a> &gt; <span class="el_source">SpringTemplateService.java</span></div><h1>SpringTemplateService.java</h1><pre class="source lang-java linenums">package org.happiest.minds.springtemplate.service;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.happiest.minds.springtemplate.request.SpringTemplateRequest;
+import org.happiest.minds.springtemplate.utility.XMLUtility;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+@Service
+<span class="fc" id="L28">@Slf4j</span>
+<span class="fc" id="L29">public class SpringTemplateService {</span>
+
+    public static final String DOWNLOAD_PIPIMPROVEMENT_SRC_MAIN_JAVA = &quot;download/pipimprovement/src/main/java/&quot;;
+    public static final String SLASH = &quot;/&quot;;
+    public static final String DOWNLOAD_PIPIMPROVEMENT_SRC_TEST_JAVA = &quot;download/pipimprovement/src/test/java/&quot;;
+    @Autowired
+    XMLUtility xmlUtility;
+
+    public void downloadTemplate(HttpServletResponse response, SpringTemplateRequest springTemplateRequest) {
+        try {
+
+            /* Copy sample template from reference folder to download folder */
+<span class="nc" id="L41">            FileUtils.copyDirectory(new File(&quot;reference&quot;), new File(&quot;download&quot;));</span>
+
+
+            /* Delete folders in src/main. Deleting in order to make directories according to the group id and artifact id */
+<span class="nc" id="L45">            FileUtils.deleteDirectory(new File(&quot;download/pipimprovement/src/main&quot;));</span>
+<span class="nc" id="L46">            FileUtils.deleteDirectory(new File(&quot;download/pipimprovement/src/test&quot;));</span>
+
+
+            /* Replace &quot;.&quot; with &quot;//&quot; in group id to make directories */
+<span class="nc" id="L50">            String groupIdPath = springTemplateRequest.getGroupId().replaceAll(&quot;[.]&quot;, &quot;//&quot;);</span>
+
+
+            /* Replace non alphabets from artifact id to create directory */
+<span class="nc" id="L54">            String artifactId = springTemplateRequest.getArtifactId().replaceAll(&quot;[^a-zA-Z]&quot;, &quot;&quot;);</span>
+
+
+            /* Path where Application Main class present */
+<span class="nc" id="L58">            String mainClassPath = DOWNLOAD_PIPIMPROVEMENT_SRC_MAIN_JAVA + groupIdPath + SLASH + artifactId.toLowerCase();</span>
+<span class="nc" id="L59">            String testClassPath = DOWNLOAD_PIPIMPROVEMENT_SRC_TEST_JAVA + groupIdPath + SLASH + artifactId.toLowerCase();</span>
+
+
+            /* Create subdirectories according to group id and artifact id */
+<span class="nc" id="L63">            Files.createDirectories(Path.of(mainClassPath));</span>
+<span class="nc" id="L64">            Files.createDirectories(Path.of(testClassPath));</span>
+
+
+
+            /* Application Main class path in reference folder */
+<span class="nc" id="L69">            String mainFileReference = &quot;reference/pipimprovement/src/main/java/com/hm&quot;;</span>
+<span class="nc" id="L70">            String testFileReference = &quot;reference/pipimprovement/src/test/java/com/hm&quot;;</span>
+
+
+            /* Copy Application Main class from reference folder to download folder */
+<span class="nc" id="L74">            FileUtils.copyDirectory(new File(mainFileReference), new File(mainClassPath));</span>
+<span class="nc" id="L75">            FileUtils.copyDirectory(new File(testFileReference), new File(testClassPath));</span>
+
+
+            /* Path of Application Main class */
+<span class="nc" id="L79">            String mainClassFileName = mainClassPath + &quot;/PipImprovementApplication.java&quot;;</span>
+<span class="nc" id="L80">            String testClassFileName = testClassPath + &quot;/PipImprovementApplicationTests.java&quot;;</span>
+
+
+            /* Replace class Name in Main class */
+<span class="nc" id="L84">            replaceText(mainClassFileName, &quot;PipImprovementApplication&quot;, StringUtils.capitalize(artifactId) + &quot;Application&quot;);</span>
+<span class="nc" id="L85">            replaceText(testClassFileName, &quot;PipImprovementApplicationTests&quot;, StringUtils.capitalize(artifactId) + &quot;ApplicationTests&quot;);</span>
+
+
+            /* Replace package name with new package name */
+<span class="nc" id="L89">            replaceText(mainClassFileName, &quot;com.hm&quot;, springTemplateRequest.getGroupId() + &quot;.&quot; + artifactId.toLowerCase());</span>
+<span class="nc" id="L90">            replaceText(testClassFileName, &quot;com.hm&quot;, springTemplateRequest.getGroupId() + &quot;.&quot; + artifactId.toLowerCase());</span>
+
+
+            /* New Main class name */
+<span class="nc" id="L94">            String mainClassNewFileName = mainClassPath + SLASH + StringUtils.capitalize(artifactId) + &quot;Application.java&quot;;</span>
+<span class="nc" id="L95">            String testClassNewFileName = testClassPath + SLASH + StringUtils.capitalize(artifactId) + &quot;ApplicationTests.java&quot;;</span>
+
+
+            /* Renaming the Main class name */
+<span class="nc" id="L99">            FileUtils.moveFile(new File(mainClassFileName), new File(mainClassNewFileName));</span>
+<span class="nc" id="L100">            FileUtils.moveFile(new File(testClassFileName), new File(testClassNewFileName));</span>
+
+
+            /* Updating the pom.xml file */
+<span class="nc" id="L104">            xmlUtility.updateXMLElementValue(&quot;download/pipimprovement/pom.xml&quot;, springTemplateRequest);</span>
+
+
+            /* Project directory name */
+<span class="nc" id="L108">            File file = new File(&quot;download/pipimprovement&quot;);</span>
+
+
+            /* Project directory new name */
+<span class="nc" id="L112">            String newFolderName = &quot;download/&quot; + springTemplateRequest.getArtifactId();</span>
+
+            /* Renaming the project directory name */
+<span class="nc" id="L115">            boolean b = file.renameTo(new File(newFolderName));</span>
+<span class="nc" id="L116">            log.info(String.valueOf(b));</span>
+
+            /* Zip the project and let the user download the zip */
+<span class="nc" id="L119">            zipAndDownloadTemplate(response, springTemplateRequest, newFolderName);</span>
+
+
+            /* Delete the project and zip file from download folder */
+<span class="nc" id="L123">            FileUtils.cleanDirectory(new File(&quot;download&quot;));</span>
+
+<span class="nc" id="L125">        } catch (Exception e) {</span>
+<span class="nc" id="L126">            log.error(&quot;Exception: {}&quot;, e.getMessage());</span>
+
+<span class="nc" id="L128">        }</span>
+<span class="nc" id="L129">    }</span>
+
+    public void zipAndDownloadTemplate(HttpServletResponse response, SpringTemplateRequest springTemplateRequest, String newFolderName) throws Exception {
+
+        /* Zip name */
+<span class="nc" id="L134">        String projectZipFolder = &quot;download/&quot; + springTemplateRequest.getArtifactId() + &quot;.zip&quot;;</span>
+
+
+        /* Zip the project directory */
+<span class="nc" id="L138">        zipFolder(Path.of(newFolderName), Path.of(projectZipFolder));</span>
+
+<span class="nc" id="L140">        Path path = Paths.get(projectZipFolder);</span>
+
+        String contentType;
+
+<span class="nc" id="L144">        contentType = Files.probeContentType(path);</span>
+
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (contentType == null) {</span>
+<span class="nc" id="L147">            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;</span>
+        }
+
+<span class="nc" id="L150">        response.setContentType(contentType);</span>
+<span class="nc" id="L151">        response.setContentLengthLong(Files.size(path));</span>
+<span class="nc" id="L152">        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()</span>
+<span class="nc" id="L153">                .filename(path.getFileName().toString())</span>
+<span class="nc" id="L154">                .build()</span>
+<span class="nc" id="L155">                .toString());</span>
+<span class="nc" id="L156">        Files.copy(path, response.getOutputStream());</span>
+<span class="nc" id="L157">    }</span>
+
+
+    public static void replaceText(String filePath, String text, String replacement) {
+
+<span class="fc" id="L162">        Path path = Paths.get(filePath);</span>
+<span class="fc" id="L163">        try (Stream&lt;String&gt; stream = Files.lines(path, StandardCharsets.UTF_8)) {</span>
+<span class="fc" id="L164">            List&lt;String&gt; list = stream.map(line -&gt; line.replace(text, replacement)).collect(Collectors.toList());</span>
+<span class="fc" id="L165">            Files.write(path, list, StandardCharsets.UTF_8);</span>
+<span class="nc" id="L166">        } catch (IOException e) {</span>
+<span class="nc" id="L167">            log.error(&quot;Exception occurred : &quot; + e.getMessage());</span>
+<span class="fc" id="L168">        }</span>
+<span class="fc" id="L169">    }</span>
+
+
+    private void zipFolder(Path sourceFolderPath, Path zipPath) {
+
+<span class="nc" id="L174">        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()))) {</span>
+
+<span class="nc" id="L176">            Files.walkFileTree(sourceFolderPath, new SimpleFileVisitor&lt;Path&gt;() {</span>
+
+                @Override
+
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+
+<span class="nc" id="L182">                    zos.putNextEntry(new ZipEntry(sourceFolderPath.relativize(file).toString()));</span>
+
+<span class="nc" id="L184">                    Files.copy(file, zos);</span>
+
+<span class="nc" id="L186">                    zos.closeEntry();</span>
+
+<span class="nc" id="L188">                    return FileVisitResult.CONTINUE;</span>
+
+                }
+
+            });
+
+<span class="nc" id="L194">        } catch (IOException e) {</span>
+
+<span class="nc" id="L196">            log.error(&quot;Exception occurred: &quot; + e.getMessage());</span>
+
+<span class="nc" id="L198">        }</span>
+
+<span class="nc" id="L200">    }</span>
+    public List&lt;String&gt; getDependency() {
+<span class="nc" id="L202">        return List.of(&quot;Web&quot;, &quot;GraphQL&quot;, &quot;Thymeleaf&quot;, &quot;Security&quot;, &quot;Jpa&quot;, &quot;JDBC&quot;, &quot;MySQL&quot;, &quot;H2&quot;, &quot;Validation&quot;, &quot;Lombok&quot;);</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
