@@ -1,13 +1,11 @@
 package org.happiest.minds.springtemplate.utility;
-
-
+import lombok.extern.slf4j.Slf4j;
 import org.happiest.minds.springtemplate.request.SpringTemplateRequest;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,12 +18,44 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
+@Slf4j
 public class XMLUtility {
+    public static final String SPRING_BOOT_STARTER_WEB = "spring-boot-starter-web";
+    public static final String SPRING_BOOT_STARTER_SECURITY = "spring-boot-starter-security";
+    public static final String COM_H_2_DATABASE = "com.h2database";
+    private static final String GROUP_ID="groupId";
+    private static final String ARTIFACT_ID="artifactId";
+    public static final String NAME = "name";
+    public static final String DESCRIPTION = "description";
+    public static final String PACKAGING = "packaging";
+    public static final String DEPENDENCIES = "dependencies";
+    public static final String DEPENDENCY = "dependency";
+    public static final String ORG_SPRINGFRAMEWORK_BOOT = "org.springframework.boot";
+    public static final String SPRING_BOOT_STARTER_GRAPHQL = "spring-boot-starter-graphql";
+    public static final String SPRING_BOOT_STARTER_THYMELEAF = "spring-boot-starter-thymeleaf";
+    public static final String COM_MYSQL = "com.mysql";
+    public static final String MYSQL_CONNECTOR_J = "mysql-connector-j";
+    public static final String SPRING_BOOT_STARTER_DATA_JDBC = "spring-boot-starter-data-jdbc";
+    public static final String H_2 = "h2";
+    public static final String SPRING_BOOT_STARTER_VALIDATION = "spring-boot-starter-validation";
+    public static final String ORG_PROJECTLOMBOK = "org.projectlombok";
+    public static final String LOMBOK = "lombok";
+    public static final String VALIDATION = "Validation";
+    public static final String H_21 = "H2";
+    public static final String MY_SQL = "MySQL";
+    public static final String JDBC = "JDBC";
+    public static final String SECURITY = "Security";
+    public static final String JPA = "Jpa";
+    public static final String THYMELEAF = "Thymeleaf";
+    public static final String GRAPH_QL = "GraphQL";
+    public static final String WEB = "Web";
+    public static final String SPRINGFRAMEWORK_BOOT = "org.springframework.boot";
+    public static final String SPRING_BOOT_STARTER_DATA_JPA = "spring-boot-starter-data-jpa";
 
-    public void updateXMLElementValue(String filePath, SpringTemplateRequest springTemplateRequest) {
+    public Document updateXMLElementValue(String filePath, SpringTemplateRequest springTemplateRequest) {
 
         File xmlFile = new File(filePath);
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newDefaultInstance();
         DocumentBuilder dBuilder;
         try {
             dBuilder = dbFactory.newDocumentBuilder();
@@ -33,34 +63,34 @@ public class XMLUtility {
 
             doc.getDocumentElement().normalize();
 
-            NodeList groupId = doc.getElementsByTagName("groupId");
+            NodeList groupId = doc.getElementsByTagName(GROUP_ID);
             if (groupId.getLength() > 0) {
                 Element groupIdElement = (Element) groupId.item(0);
                 groupIdElement.setTextContent(springTemplateRequest.getGroupId());
 
             }
-            NodeList artifactId = doc.getElementsByTagName("artifactId");
+            NodeList artifactId = doc.getElementsByTagName(ARTIFACT_ID);
             if (artifactId.getLength() > 0) {
                 Element artifactIdElement = (Element) artifactId.item(0);
                 artifactIdElement.setTextContent(springTemplateRequest.getArtifactId());
 
             }
 
-            NodeList name = doc.getElementsByTagName("name");
+            NodeList name = doc.getElementsByTagName(NAME);
             if (name.getLength() > 0) {
                 Element nameElement = (Element) name.item(0);
                 nameElement.setTextContent(springTemplateRequest.getName());
 
             }
 
-            NodeList description = doc.getElementsByTagName("description");
+            NodeList description = doc.getElementsByTagName(DESCRIPTION);
             if (description.getLength() > 0) {
                 Element descriptionElement = (Element) description.item(0);
                 descriptionElement.setTextContent(springTemplateRequest.getDescription());
 
             }
 
-            NodeList packaging = doc.getElementsByTagName("packaging");
+            NodeList packaging = doc.getElementsByTagName(PACKAGING);
             if (packaging.getLength() > 0) {
                 Element packagingElement = (Element) packaging.item(0);
                 packagingElement.setTextContent(springTemplateRequest.getPackagingType());
@@ -76,135 +106,136 @@ public class XMLUtility {
             for (String s : dependencyInput) {
                 String groupIdValue;
                 String artifactIdValue;
-                NodeList dependencies = doc.getElementsByTagName("dependencies");
+                NodeList dependencies = doc.getElementsByTagName(DEPENDENCIES);
                 switch (s) {
-                    case "Web":
-                        dependency = doc.createElement("dependency");
+                    case WEB:
+                        dependency = doc.createElement(DEPENDENCY);
                         dependenciesElement = (Element) dependencies.item(0);
                         dependenciesElement.appendChild(dependency);
-                        groupIdOfDependency = doc.createElement("groupId");
-                        artifactIdOfDependency = doc.createElement("artifactId");
+                        groupIdOfDependency = doc.createElement(GROUP_ID);
+                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);
                         dependency.appendChild(groupIdOfDependency);
                         dependency.appendChild(artifactIdOfDependency);
-                        groupIdValue = "org.springframework.boot";
-                        artifactIdValue = "spring-boot-starter-web";
+                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;
+                        artifactIdValue = SPRING_BOOT_STARTER_WEB;
                         groupIdOfDependency.setTextContent(groupIdValue);
                         artifactIdOfDependency.setTextContent(artifactIdValue);
                         break;
-                    case "GraphQL":
-                        dependency = doc.createElement("dependency");
+                    case GRAPH_QL:
+                        dependency = doc.createElement(DEPENDENCY);
                         dependenciesElement = (Element) dependencies.item(0);
                         dependenciesElement.appendChild(dependency);
-                        groupIdOfDependency = doc.createElement("groupId");
-                        artifactIdOfDependency = doc.createElement("artifactId");
+                        groupIdOfDependency = doc.createElement(GROUP_ID);
+                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);
                         dependency.appendChild(groupIdOfDependency);
                         dependency.appendChild(artifactIdOfDependency);
-                        groupIdValue = "org.springframework.boot";
-                        artifactIdValue = "spring-boot-starter-graphql";
+                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;
+                        artifactIdValue = SPRING_BOOT_STARTER_GRAPHQL;
                         groupIdOfDependency.setTextContent(groupIdValue);
                         artifactIdOfDependency.setTextContent(artifactIdValue);
                         break;
-                    case "Thymeleaf":
-                        dependency = doc.createElement("dependency");
+                    case THYMELEAF:
+                        dependency = doc.createElement(DEPENDENCY);
                         dependenciesElement = (Element) dependencies.item(0);
                         dependenciesElement.appendChild(dependency);
-                        groupIdOfDependency = doc.createElement("groupId");
-                        artifactIdOfDependency = doc.createElement("artifactId");
+                        groupIdOfDependency = doc.createElement(GROUP_ID);
+                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);
                         dependency.appendChild(groupIdOfDependency);
                         dependency.appendChild(artifactIdOfDependency);
-                        groupIdValue = "org.springframework.boot";
-                        artifactIdValue = "spring-boot-starter-thymeleaf";
+                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;
+                        artifactIdValue = SPRING_BOOT_STARTER_THYMELEAF;
                         groupIdOfDependency.setTextContent(groupIdValue);
                         artifactIdOfDependency.setTextContent(artifactIdValue);
                         break;
-                    case "Security":
-                        dependency = doc.createElement("dependency");
+                    case SECURITY:
+                        dependency = doc.createElement(DEPENDENCY);
                         dependenciesElement = (Element) dependencies.item(0);
                         dependenciesElement.appendChild(dependency);
-                        groupIdOfDependency = doc.createElement("groupId");
-                        artifactIdOfDependency = doc.createElement("artifactId");
+                        groupIdOfDependency = doc.createElement(GROUP_ID);
+                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);
                         dependency.appendChild(groupIdOfDependency);
                         dependency.appendChild(artifactIdOfDependency);
-                        groupIdValue = "org.springframework.boot";
-                        artifactIdValue = "spring-boot-starter-security";
+                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;
+                        artifactIdValue = SPRING_BOOT_STARTER_SECURITY;
                         groupIdOfDependency.setTextContent(groupIdValue);
                         artifactIdOfDependency.setTextContent(artifactIdValue);
                         break;
-                    case "Jpa":
-                        dependency = doc.createElement("dependency");
+                    case JPA:
+                        dependency = doc.createElement(DEPENDENCY);
                         dependenciesElement = (Element) dependencies.item(0);
                         dependenciesElement.appendChild(dependency);
-                        groupIdOfDependency = doc.createElement("groupId");
-                        artifactIdOfDependency = doc.createElement("artifactId");
+                        groupIdOfDependency = doc.createElement(GROUP_ID);
+                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);
                         dependency.appendChild(groupIdOfDependency);
                         dependency.appendChild(artifactIdOfDependency);
-                        groupIdValue = "org.springframework.boot";
-                        artifactIdValue = "spring-boot-starter-data-jpa";
+                        groupIdValue = SPRINGFRAMEWORK_BOOT;
+                        artifactIdValue = SPRING_BOOT_STARTER_DATA_JPA;
                         groupIdOfDependency.setTextContent(groupIdValue);
                         artifactIdOfDependency.setTextContent(artifactIdValue);
                         break;
-                    case "JDBC":
-                        dependency = doc.createElement("dependency");
+                    case JDBC:
+                        dependency = doc.createElement(DEPENDENCY);
                         dependenciesElement = (Element) dependencies.item(0);
                         dependenciesElement.appendChild(dependency);
-                        groupIdOfDependency = doc.createElement("groupId");
-                        artifactIdOfDependency = doc.createElement("artifactId");
+                        groupIdOfDependency = doc.createElement(GROUP_ID);
+                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);
                         dependency.appendChild(groupIdOfDependency);
                         dependency.appendChild(artifactIdOfDependency);
-                        groupIdValue = "org.springframework.boot";
-                        artifactIdValue = "spring-boot-starter-data-jdbc";
+                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;
+                        artifactIdValue = SPRING_BOOT_STARTER_DATA_JDBC;
                         groupIdOfDependency.setTextContent(groupIdValue);
                         artifactIdOfDependency.setTextContent(artifactIdValue);
                         break;
-                    case "MySQL":
-                        dependency = doc.createElement("dependency");
+                    case MY_SQL:
+                        dependency = doc.createElement(DEPENDENCY);
                         dependenciesElement = (Element) dependencies.item(0);
                         dependenciesElement.appendChild(dependency);
-                        groupIdOfDependency = doc.createElement("groupId");
-                        artifactIdOfDependency = doc.createElement("artifactId");
+                        groupIdOfDependency = doc.createElement(GROUP_ID);
+                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);
                         dependency.appendChild(groupIdOfDependency);
                         dependency.appendChild(artifactIdOfDependency);
-                        groupIdValue = "com.mysql";
-                        artifactIdValue = "mysql-connector-j";
+                        groupIdValue = COM_MYSQL;
+                        artifactIdValue = MYSQL_CONNECTOR_J;
                         groupIdOfDependency.setTextContent(groupIdValue);
                         artifactIdOfDependency.setTextContent(artifactIdValue);
                         break;
-                    case "H2":
-                        dependency = doc.createElement("dependency");
+                    case H_21:
+
+                        dependency = doc.createElement(DEPENDENCY);
                         dependenciesElement = (Element) dependencies.item(0);
                         dependenciesElement.appendChild(dependency);
-                        groupIdOfDependency = doc.createElement("groupId");
-                        artifactIdOfDependency = doc.createElement("artifactId");
+                        groupIdOfDependency = doc.createElement(GROUP_ID);
+                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);
                         dependency.appendChild(groupIdOfDependency);
                         dependency.appendChild(artifactIdOfDependency);
-                        groupIdValue = "com.h2database";
-                        artifactIdValue = "h2";
+                        groupIdValue = COM_H_2_DATABASE;
+                        artifactIdValue = H_2;
                         groupIdOfDependency.setTextContent(groupIdValue);
                         artifactIdOfDependency.setTextContent(artifactIdValue);
                         break;
-                    case "Validation":
-                        dependency = doc.createElement("dependency");
+                    case VALIDATION:
+                        dependency = doc.createElement(DEPENDENCY);
                         dependenciesElement = (Element) dependencies.item(0);
                         dependenciesElement.appendChild(dependency);
-                        groupIdOfDependency = doc.createElement("groupId");
-                        artifactIdOfDependency = doc.createElement("artifactId");
+                        groupIdOfDependency = doc.createElement(GROUP_ID);
+                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);
                         dependency.appendChild(groupIdOfDependency);
                         dependency.appendChild(artifactIdOfDependency);
-                        groupIdValue = "org.springframework.boot";
-                        artifactIdValue = "spring-boot-starter-validation";
+                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;
+                        artifactIdValue = SPRING_BOOT_STARTER_VALIDATION;
                         groupIdOfDependency.setTextContent(groupIdValue);
                         artifactIdOfDependency.setTextContent(artifactIdValue);
                         break;
-                    case "Lombok":
-                        dependency = doc.createElement("dependency");
+                    case LOMBOK:
+                        dependency = doc.createElement(DEPENDENCY);
                         dependenciesElement = (Element) dependencies.item(0);
                         dependenciesElement.appendChild(dependency);
-                        groupIdOfDependency = doc.createElement("groupId");
-                        artifactIdOfDependency = doc.createElement("artifactId");
+                        groupIdOfDependency = doc.createElement(GROUP_ID);
+                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);
                         dependency.appendChild(groupIdOfDependency);
                         dependency.appendChild(artifactIdOfDependency);
-                        groupIdValue = "org.projectlombok";
-                        artifactIdValue = "lombok";
+                        groupIdValue = ORG_PROJECTLOMBOK;
+                        artifactIdValue = LOMBOK;
                         groupIdOfDependency.setTextContent(groupIdValue);
                         artifactIdOfDependency.setTextContent(artifactIdValue);
                         break;
@@ -213,7 +244,7 @@ public class XMLUtility {
                 }
             }
             doc.getDocumentElement().normalize();
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
             Transformer transformer = null;
             transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
@@ -221,8 +252,9 @@ public class XMLUtility {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(source, result);
         } catch (TransformerException | ParserConfigurationException | IOException | SAXException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
+        return null;
     }
 
 }

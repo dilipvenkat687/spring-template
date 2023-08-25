@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XMLUtility.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">spring-template</a> &gt; <a href="index.source.html" class="el_package">org.happiest.minds.springtemplate.utility</a> &gt; <span class="el_source">XMLUtility.java</span></div><h1>XMLUtility.java</h1><pre class="source lang-java linenums">package org.happiest.minds.springtemplate.utility;
+import lombok.extern.slf4j.Slf4j;
+import org.happiest.minds.springtemplate.request.SpringTemplateRequest;
+import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+@Component
+<span class="fc" id="L21">@Slf4j</span>
+<span class="nc" id="L22">public class XMLUtility {</span>
+    public static final String SPRING_BOOT_STARTER_WEB = &quot;spring-boot-starter-web&quot;;
+    public static final String SPRING_BOOT_STARTER_SECURITY = &quot;spring-boot-starter-security&quot;;
+    public static final String COM_H_2_DATABASE = &quot;com.h2database&quot;;
+    private static final String GROUP_ID=&quot;groupId&quot;;
+    private static final String ARTIFACT_ID=&quot;artifactId&quot;;
+    public static final String NAME = &quot;name&quot;;
+    public static final String DESCRIPTION = &quot;description&quot;;
+    public static final String PACKAGING = &quot;packaging&quot;;
+    public static final String DEPENDENCIES = &quot;dependencies&quot;;
+    public static final String DEPENDENCY = &quot;dependency&quot;;
+    public static final String ORG_SPRINGFRAMEWORK_BOOT = &quot;org.springframework.boot&quot;;
+    public static final String SPRING_BOOT_STARTER_GRAPHQL = &quot;spring-boot-starter-graphql&quot;;
+    public static final String SPRING_BOOT_STARTER_THYMELEAF = &quot;spring-boot-starter-thymeleaf&quot;;
+    public static final String COM_MYSQL = &quot;com.mysql&quot;;
+    public static final String MYSQL_CONNECTOR_J = &quot;mysql-connector-j&quot;;
+    public static final String SPRING_BOOT_STARTER_DATA_JDBC = &quot;spring-boot-starter-data-jdbc&quot;;
+    public static final String H_2 = &quot;h2&quot;;
+    public static final String SPRING_BOOT_STARTER_VALIDATION = &quot;spring-boot-starter-validation&quot;;
+    public static final String ORG_PROJECTLOMBOK = &quot;org.projectlombok&quot;;
+    public static final String LOMBOK = &quot;lombok&quot;;
+    public static final String VALIDATION = &quot;Validation&quot;;
+    public static final String H_21 = &quot;H2&quot;;
+    public static final String MY_SQL = &quot;MySQL&quot;;
+    public static final String JDBC = &quot;JDBC&quot;;
+    public static final String SECURITY = &quot;Security&quot;;
+    public static final String JPA = &quot;Jpa&quot;;
+    public static final String THYMELEAF = &quot;Thymeleaf&quot;;
+    public static final String GRAPH_QL = &quot;GraphQL&quot;;
+    public static final String WEB = &quot;Web&quot;;
+    public static final String SPRINGFRAMEWORK_BOOT = &quot;org.springframework.boot&quot;;
+    public static final String SPRING_BOOT_STARTER_DATA_JPA = &quot;spring-boot-starter-data-jpa&quot;;
+
+    public Document updateXMLElementValue(String filePath, SpringTemplateRequest springTemplateRequest) {
+
+<span class="nc" id="L57">        File xmlFile = new File(filePath);</span>
+<span class="nc" id="L58">        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newDefaultInstance();</span>
+        DocumentBuilder dBuilder;
+        try {
+<span class="nc" id="L61">            dBuilder = dbFactory.newDocumentBuilder();</span>
+<span class="nc" id="L62">            Document doc = dBuilder.parse(xmlFile);</span>
+
+<span class="nc" id="L64">            doc.getDocumentElement().normalize();</span>
+
+<span class="nc" id="L66">            NodeList groupId = doc.getElementsByTagName(GROUP_ID);</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">            if (groupId.getLength() &gt; 0) {</span>
+<span class="nc" id="L68">                Element groupIdElement = (Element) groupId.item(0);</span>
+<span class="nc" id="L69">                groupIdElement.setTextContent(springTemplateRequest.getGroupId());</span>
+
+            }
+<span class="nc" id="L72">            NodeList artifactId = doc.getElementsByTagName(ARTIFACT_ID);</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            if (artifactId.getLength() &gt; 0) {</span>
+<span class="nc" id="L74">                Element artifactIdElement = (Element) artifactId.item(0);</span>
+<span class="nc" id="L75">                artifactIdElement.setTextContent(springTemplateRequest.getArtifactId());</span>
+
+            }
+
+<span class="nc" id="L79">            NodeList name = doc.getElementsByTagName(NAME);</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (name.getLength() &gt; 0) {</span>
+<span class="nc" id="L81">                Element nameElement = (Element) name.item(0);</span>
+<span class="nc" id="L82">                nameElement.setTextContent(springTemplateRequest.getName());</span>
+
+            }
+
+<span class="nc" id="L86">            NodeList description = doc.getElementsByTagName(DESCRIPTION);</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">            if (description.getLength() &gt; 0) {</span>
+<span class="nc" id="L88">                Element descriptionElement = (Element) description.item(0);</span>
+<span class="nc" id="L89">                descriptionElement.setTextContent(springTemplateRequest.getDescription());</span>
+
+            }
+
+<span class="nc" id="L93">            NodeList packaging = doc.getElementsByTagName(PACKAGING);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">            if (packaging.getLength() &gt; 0) {</span>
+<span class="nc" id="L95">                Element packagingElement = (Element) packaging.item(0);</span>
+<span class="nc" id="L96">                packagingElement.setTextContent(springTemplateRequest.getPackagingType());</span>
+
+            }
+
+<span class="nc" id="L100">            Set&lt;String&gt; dependencyInput = new HashSet&lt;&gt;(springTemplateRequest.getDependencies());</span>
+            Element groupIdOfDependency;
+            Element artifactIdOfDependency;
+            Element dependency;
+            Element dependenciesElement;
+
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            for (String s : dependencyInput) {</span>
+                String groupIdValue;
+                String artifactIdValue;
+<span class="nc" id="L109">                NodeList dependencies = doc.getElementsByTagName(DEPENDENCIES);</span>
+<span class="nc bnc" id="L110" title="All 11 branches missed.">                switch (s) {</span>
+                    case WEB:
+<span class="nc" id="L112">                        dependency = doc.createElement(DEPENDENCY);</span>
+<span class="nc" id="L113">                        dependenciesElement = (Element) dependencies.item(0);</span>
+<span class="nc" id="L114">                        dependenciesElement.appendChild(dependency);</span>
+<span class="nc" id="L115">                        groupIdOfDependency = doc.createElement(GROUP_ID);</span>
+<span class="nc" id="L116">                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);</span>
+<span class="nc" id="L117">                        dependency.appendChild(groupIdOfDependency);</span>
+<span class="nc" id="L118">                        dependency.appendChild(artifactIdOfDependency);</span>
+<span class="nc" id="L119">                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;</span>
+<span class="nc" id="L120">                        artifactIdValue = SPRING_BOOT_STARTER_WEB;</span>
+<span class="nc" id="L121">                        groupIdOfDependency.setTextContent(groupIdValue);</span>
+<span class="nc" id="L122">                        artifactIdOfDependency.setTextContent(artifactIdValue);</span>
+<span class="nc" id="L123">                        break;</span>
+                    case GRAPH_QL:
+<span class="nc" id="L125">                        dependency = doc.createElement(DEPENDENCY);</span>
+<span class="nc" id="L126">                        dependenciesElement = (Element) dependencies.item(0);</span>
+<span class="nc" id="L127">                        dependenciesElement.appendChild(dependency);</span>
+<span class="nc" id="L128">                        groupIdOfDependency = doc.createElement(GROUP_ID);</span>
+<span class="nc" id="L129">                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);</span>
+<span class="nc" id="L130">                        dependency.appendChild(groupIdOfDependency);</span>
+<span class="nc" id="L131">                        dependency.appendChild(artifactIdOfDependency);</span>
+<span class="nc" id="L132">                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;</span>
+<span class="nc" id="L133">                        artifactIdValue = SPRING_BOOT_STARTER_GRAPHQL;</span>
+<span class="nc" id="L134">                        groupIdOfDependency.setTextContent(groupIdValue);</span>
+<span class="nc" id="L135">                        artifactIdOfDependency.setTextContent(artifactIdValue);</span>
+<span class="nc" id="L136">                        break;</span>
+                    case THYMELEAF:
+<span class="nc" id="L138">                        dependency = doc.createElement(DEPENDENCY);</span>
+<span class="nc" id="L139">                        dependenciesElement = (Element) dependencies.item(0);</span>
+<span class="nc" id="L140">                        dependenciesElement.appendChild(dependency);</span>
+<span class="nc" id="L141">                        groupIdOfDependency = doc.createElement(GROUP_ID);</span>
+<span class="nc" id="L142">                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);</span>
+<span class="nc" id="L143">                        dependency.appendChild(groupIdOfDependency);</span>
+<span class="nc" id="L144">                        dependency.appendChild(artifactIdOfDependency);</span>
+<span class="nc" id="L145">                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;</span>
+<span class="nc" id="L146">                        artifactIdValue = SPRING_BOOT_STARTER_THYMELEAF;</span>
+<span class="nc" id="L147">                        groupIdOfDependency.setTextContent(groupIdValue);</span>
+<span class="nc" id="L148">                        artifactIdOfDependency.setTextContent(artifactIdValue);</span>
+<span class="nc" id="L149">                        break;</span>
+                    case SECURITY:
+<span class="nc" id="L151">                        dependency = doc.createElement(DEPENDENCY);</span>
+<span class="nc" id="L152">                        dependenciesElement = (Element) dependencies.item(0);</span>
+<span class="nc" id="L153">                        dependenciesElement.appendChild(dependency);</span>
+<span class="nc" id="L154">                        groupIdOfDependency = doc.createElement(GROUP_ID);</span>
+<span class="nc" id="L155">                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);</span>
+<span class="nc" id="L156">                        dependency.appendChild(groupIdOfDependency);</span>
+<span class="nc" id="L157">                        dependency.appendChild(artifactIdOfDependency);</span>
+<span class="nc" id="L158">                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;</span>
+<span class="nc" id="L159">                        artifactIdValue = SPRING_BOOT_STARTER_SECURITY;</span>
+<span class="nc" id="L160">                        groupIdOfDependency.setTextContent(groupIdValue);</span>
+<span class="nc" id="L161">                        artifactIdOfDependency.setTextContent(artifactIdValue);</span>
+<span class="nc" id="L162">                        break;</span>
+                    case JPA:
+<span class="nc" id="L164">                        dependency = doc.createElement(DEPENDENCY);</span>
+<span class="nc" id="L165">                        dependenciesElement = (Element) dependencies.item(0);</span>
+<span class="nc" id="L166">                        dependenciesElement.appendChild(dependency);</span>
+<span class="nc" id="L167">                        groupIdOfDependency = doc.createElement(GROUP_ID);</span>
+<span class="nc" id="L168">                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);</span>
+<span class="nc" id="L169">                        dependency.appendChild(groupIdOfDependency);</span>
+<span class="nc" id="L170">                        dependency.appendChild(artifactIdOfDependency);</span>
+<span class="nc" id="L171">                        groupIdValue = SPRINGFRAMEWORK_BOOT;</span>
+<span class="nc" id="L172">                        artifactIdValue = SPRING_BOOT_STARTER_DATA_JPA;</span>
+<span class="nc" id="L173">                        groupIdOfDependency.setTextContent(groupIdValue);</span>
+<span class="nc" id="L174">                        artifactIdOfDependency.setTextContent(artifactIdValue);</span>
+<span class="nc" id="L175">                        break;</span>
+                    case JDBC:
+<span class="nc" id="L177">                        dependency = doc.createElement(DEPENDENCY);</span>
+<span class="nc" id="L178">                        dependenciesElement = (Element) dependencies.item(0);</span>
+<span class="nc" id="L179">                        dependenciesElement.appendChild(dependency);</span>
+<span class="nc" id="L180">                        groupIdOfDependency = doc.createElement(GROUP_ID);</span>
+<span class="nc" id="L181">                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);</span>
+<span class="nc" id="L182">                        dependency.appendChild(groupIdOfDependency);</span>
+<span class="nc" id="L183">                        dependency.appendChild(artifactIdOfDependency);</span>
+<span class="nc" id="L184">                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;</span>
+<span class="nc" id="L185">                        artifactIdValue = SPRING_BOOT_STARTER_DATA_JDBC;</span>
+<span class="nc" id="L186">                        groupIdOfDependency.setTextContent(groupIdValue);</span>
+<span class="nc" id="L187">                        artifactIdOfDependency.setTextContent(artifactIdValue);</span>
+<span class="nc" id="L188">                        break;</span>
+                    case MY_SQL:
+<span class="nc" id="L190">                        dependency = doc.createElement(DEPENDENCY);</span>
+<span class="nc" id="L191">                        dependenciesElement = (Element) dependencies.item(0);</span>
+<span class="nc" id="L192">                        dependenciesElement.appendChild(dependency);</span>
+<span class="nc" id="L193">                        groupIdOfDependency = doc.createElement(GROUP_ID);</span>
+<span class="nc" id="L194">                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);</span>
+<span class="nc" id="L195">                        dependency.appendChild(groupIdOfDependency);</span>
+<span class="nc" id="L196">                        dependency.appendChild(artifactIdOfDependency);</span>
+<span class="nc" id="L197">                        groupIdValue = COM_MYSQL;</span>
+<span class="nc" id="L198">                        artifactIdValue = MYSQL_CONNECTOR_J;</span>
+<span class="nc" id="L199">                        groupIdOfDependency.setTextContent(groupIdValue);</span>
+<span class="nc" id="L200">                        artifactIdOfDependency.setTextContent(artifactIdValue);</span>
+<span class="nc" id="L201">                        break;</span>
+                    case H_21:
+
+<span class="nc" id="L204">                        dependency = doc.createElement(DEPENDENCY);</span>
+<span class="nc" id="L205">                        dependenciesElement = (Element) dependencies.item(0);</span>
+<span class="nc" id="L206">                        dependenciesElement.appendChild(dependency);</span>
+<span class="nc" id="L207">                        groupIdOfDependency = doc.createElement(GROUP_ID);</span>
+<span class="nc" id="L208">                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);</span>
+<span class="nc" id="L209">                        dependency.appendChild(groupIdOfDependency);</span>
+<span class="nc" id="L210">                        dependency.appendChild(artifactIdOfDependency);</span>
+<span class="nc" id="L211">                        groupIdValue = COM_H_2_DATABASE;</span>
+<span class="nc" id="L212">                        artifactIdValue = H_2;</span>
+<span class="nc" id="L213">                        groupIdOfDependency.setTextContent(groupIdValue);</span>
+<span class="nc" id="L214">                        artifactIdOfDependency.setTextContent(artifactIdValue);</span>
+<span class="nc" id="L215">                        break;</span>
+                    case VALIDATION:
+<span class="nc" id="L217">                        dependency = doc.createElement(DEPENDENCY);</span>
+<span class="nc" id="L218">                        dependenciesElement = (Element) dependencies.item(0);</span>
+<span class="nc" id="L219">                        dependenciesElement.appendChild(dependency);</span>
+<span class="nc" id="L220">                        groupIdOfDependency = doc.createElement(GROUP_ID);</span>
+<span class="nc" id="L221">                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);</span>
+<span class="nc" id="L222">                        dependency.appendChild(groupIdOfDependency);</span>
+<span class="nc" id="L223">                        dependency.appendChild(artifactIdOfDependency);</span>
+<span class="nc" id="L224">                        groupIdValue = ORG_SPRINGFRAMEWORK_BOOT;</span>
+<span class="nc" id="L225">                        artifactIdValue = SPRING_BOOT_STARTER_VALIDATION;</span>
+<span class="nc" id="L226">                        groupIdOfDependency.setTextContent(groupIdValue);</span>
+<span class="nc" id="L227">                        artifactIdOfDependency.setTextContent(artifactIdValue);</span>
+<span class="nc" id="L228">                        break;</span>
+                    case LOMBOK:
+<span class="nc" id="L230">                        dependency = doc.createElement(DEPENDENCY);</span>
+<span class="nc" id="L231">                        dependenciesElement = (Element) dependencies.item(0);</span>
+<span class="nc" id="L232">                        dependenciesElement.appendChild(dependency);</span>
+<span class="nc" id="L233">                        groupIdOfDependency = doc.createElement(GROUP_ID);</span>
+<span class="nc" id="L234">                        artifactIdOfDependency = doc.createElement(ARTIFACT_ID);</span>
+<span class="nc" id="L235">                        dependency.appendChild(groupIdOfDependency);</span>
+<span class="nc" id="L236">                        dependency.appendChild(artifactIdOfDependency);</span>
+<span class="nc" id="L237">                        groupIdValue = ORG_PROJECTLOMBOK;</span>
+<span class="nc" id="L238">                        artifactIdValue = LOMBOK;</span>
+<span class="nc" id="L239">                        groupIdOfDependency.setTextContent(groupIdValue);</span>
+<span class="nc" id="L240">                        artifactIdOfDependency.setTextContent(artifactIdValue);</span>
+<span class="nc" id="L241">                        break;</span>
+                    default:
+                        break;
+                }
+<span class="nc" id="L245">            }</span>
+<span class="nc" id="L246">            doc.getDocumentElement().normalize();</span>
+<span class="nc" id="L247">            TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();</span>
+<span class="nc" id="L248">            Transformer transformer = null;</span>
+<span class="nc" id="L249">            transformer = transformerFactory.newTransformer();</span>
+<span class="nc" id="L250">            DOMSource source = new DOMSource(doc);</span>
+<span class="nc" id="L251">            StreamResult result = new StreamResult(new File(filePath));</span>
+<span class="nc" id="L252">            transformer.setOutputProperty(OutputKeys.INDENT, &quot;yes&quot;);</span>
+<span class="nc" id="L253">            transformer.transform(source, result);</span>
+<span class="nc" id="L254">        } catch (TransformerException | ParserConfigurationException | IOException | SAXException e) {</span>
+<span class="nc" id="L255">            log.error(e.getMessage());</span>
+<span class="nc" id="L256">        }</span>
+<span class="nc" id="L257">        return null;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

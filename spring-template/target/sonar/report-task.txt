@@ -2,5 +2,5 @@ projectKey=spring-template
 serverUrl=http://localhost:9099
 serverVersion=9.6.1.59531
 dashboardUrl=http://localhost:9099/dashboard?id=spring-template
-ceTaskId=AYoiN1ktVJeHmkjKfofG
-ceTaskUrl=http://localhost:9099/api/ce/task?id=AYoiN1ktVJeHmkjKfofG
+ceTaskId=AYosh5ijjFE5ZoNBaj7b
+ceTaskUrl=http://localhost:9099/api/ce/task?id=AYosh5ijjFE5ZoNBaj7b

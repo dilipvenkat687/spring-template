@@ -28,6 +28,9 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 public class SpringTemplateService {
 
+    public static final String DOWNLOAD_PIPIMPROVEMENT_SRC_MAIN_JAVA = "download/pipimprovement/src/main/java/";
+    public static final String SLASH = "/";
+    public static final String DOWNLOAD_PIPIMPROVEMENT_SRC_TEST_JAVA = "download/pipimprovement/src/test/java/";
     @Autowired
     XMLUtility xmlUtility;
 
@@ -52,8 +55,8 @@ public class SpringTemplateService {
 
 
             /* Path where Application Main class present */
-            String mainClassPath = "download/pipimprovement/src/main/java/" + groupIdPath + "/" + artifactId.toLowerCase();
-            String testClassPath = "download/pipimprovement/src/test/java/" + groupIdPath + "/" + artifactId.toLowerCase();
+            String mainClassPath = DOWNLOAD_PIPIMPROVEMENT_SRC_MAIN_JAVA + groupIdPath + SLASH + artifactId.toLowerCase();
+            String testClassPath = DOWNLOAD_PIPIMPROVEMENT_SRC_TEST_JAVA + groupIdPath + SLASH + artifactId.toLowerCase();
 
 
             /* Create subdirectories according to group id and artifact id */
@@ -88,8 +91,8 @@ public class SpringTemplateService {
 
 
             /* New Main class name */
-            String mainClassNewFileName = mainClassPath + "/" + StringUtils.capitalize(artifactId) + "Application.java";
-            String testClassNewFileName = testClassPath + "/" + StringUtils.capitalize(artifactId) + "ApplicationTests.java";
+            String mainClassNewFileName = mainClassPath + SLASH + StringUtils.capitalize(artifactId) + "Application.java";
+            String testClassNewFileName = testClassPath + SLASH + StringUtils.capitalize(artifactId) + "ApplicationTests.java";
 
 
             /* Renaming the Main class name */
@@ -110,7 +113,7 @@ public class SpringTemplateService {
 
             /* Renaming the project directory name */
             boolean b = file.renameTo(new File(newFolderName));
-            System.out.println(b);
+            log.info(String.valueOf(b));
 
             /* Zip the project and let the user download the zip */
             zipAndDownloadTemplate(response, springTemplateRequest, newFolderName);
@@ -121,7 +124,7 @@ public class SpringTemplateService {
 
         } catch (Exception e) {
             log.error("Exception: {}", e.getMessage());
-            throw new RuntimeException(e);
+
         }
     }
 
@@ -154,31 +157,47 @@ public class SpringTemplateService {
     }
 
 
-    private static void replaceText(String filePath, String text, String replacement) {
+    public static void replaceText(String filePath, String text, String replacement) {
 
         Path path = Paths.get(filePath);
         try (Stream<String> stream = Files.lines(path, StandardCharsets.UTF_8)) {
             List<String> list = stream.map(line -> line.replace(text, replacement)).collect(Collectors.toList());
             Files.write(path, list, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Exception occurred : " + e.getMessage());
         }
     }
 
-    private void zipFolder(Path sourceFolderPath, Path zipPath) throws Exception {
-        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()));
-        Files.walkFileTree(sourceFolderPath, new SimpleFileVisitor<Path>() {
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                zos.putNextEntry(new ZipEntry(sourceFolderPath.relativize(file).toString()));
-                Files.copy(file, zos);
-                zos.closeEntry();
-                return FileVisitResult.CONTINUE;
-            }
-        });
-        zos.close();
+
+    private void zipFolder(Path sourceFolderPath, Path zipPath) {
+
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()))) {
+
+            Files.walkFileTree(sourceFolderPath, new SimpleFileVisitor<Path>() {
+
+                @Override
+
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+
+                    zos.putNextEntry(new ZipEntry(sourceFolderPath.relativize(file).toString()));
+
+                    Files.copy(file, zos);
+
+                    zos.closeEntry();
+
+                    return FileVisitResult.CONTINUE;
+
+                }
+
+            });
+
+        } catch (IOException e) {
+
+            log.error("Exception occurred: " + e.getMessage());
+
+        }
+
     }
-
-
     public List<String> getDependency() {
         return List.of("Web", "GraphQL", "Thymeleaf", "Security", "Jpa", "JDBC", "MySQL", "H2", "Validation", "Lombok");
     }
